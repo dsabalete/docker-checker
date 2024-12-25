@@ -1,0 +1,38 @@
+name: Update Docker Images
+
+on:
+  schedule:
+    # Run at midnight every day (UTC)
+    - cron: "0 0 * * *"
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  update-images:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository to get the script
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install requests docker python-dotenv
+
+      # Step 4: Log in to Docker Hub
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      # Step 5: Run the Python script
+      - name: Run the update script
+        run: python3 update_inactive_images.py
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }} # Use the secret username
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }} # Use the secret token
