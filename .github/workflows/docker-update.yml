@@ -2,8 +2,8 @@ name: Update Docker Images
 
 on:
   schedule:
-    # Run at midnight every day (UTC)
-    - cron: "0 0 * * *"
+    # Run once a week
+    - cron: "0 0 * * 1"
   workflow_dispatch: # Allows manual trigger
 
 jobs:
